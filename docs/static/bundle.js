@@ -591,7 +591,7 @@ https://github.com/joyent/node/blob/master/lib/module.js
     }
 })();
 
-$_mod.installed("makeup-modal$0.0.1", "makeup-keyboard-trap", "0.0.2");
+$_mod.installed("makeup-modal$0.0.2", "makeup-keyboard-trap", "0.0.2");
 $_mod.main("/makeup-keyboard-trap$0.0.2", "");
 $_mod.def("/makeup-keyboard-trap$0.0.2/util", function(require, exports, module, __filename, __dirname) { 'use strict';
 
@@ -698,7 +698,7 @@ module.exports = {
 };
 
 });
-$_mod.installed("makeup-modal$0.0.1", "makeup-screenreader-trap", "0.0.3");
+$_mod.installed("makeup-modal$0.0.2", "makeup-screenreader-trap", "0.0.3");
 $_mod.main("/makeup-screenreader-trap$0.0.3", "");
 $_mod.def("/makeup-screenreader-trap$0.0.3/util", function(require, exports, module, __filename, __dirname) { 'use strict';
 
@@ -891,7 +891,7 @@ module.exports = {
 };
 
 });
-$_mod.def("/makeup-modal$0.0.1/index", function(require, exports, module, __filename, __dirname) { 'use strict';
+$_mod.def("/makeup-modal$0.0.2/index", function(require, exports, module, __filename, __dirname) { 'use strict';
 
 var keyboardTrap = require('/makeup-keyboard-trap$0.0.2/index'/*'makeup-keyboard-trap'*/);
 var screenreaderTrap = require('/makeup-screenreader-trap$0.0.3/index'/*'makeup-screenreader-trap'*/);
@@ -933,9 +933,9 @@ module.exports = {
 };
 
 });
-$_mod.def("/makeup-modal$0.0.1/docs/index", function(require, exports, module, __filename, __dirname) { var modal = require('/makeup-modal$0.0.1/index'/*'../index.js'*/);
+$_mod.def("/makeup-modal$0.0.2/docs/index", function(require, exports, module, __filename, __dirname) { var modal = require('/makeup-modal$0.0.2/index'/*'../index.js'*/);
 var modalEl = document.querySelector('.modal');
 modal.modal(modalEl);
 
 });
-$_mod.run("/makeup-modal$0.0.1/docs/index");
+$_mod.run("/makeup-modal$0.0.2/docs/index");
