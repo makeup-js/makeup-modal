@@ -591,26 +591,14 @@ https://github.com/joyent/node/blob/master/lib/module.js
     }
 })();
 
-$_mod.installed("makeup-modal$0.0.1", "makeup-keyboard-trap", "0.0.1");
-$_mod.main("/makeup-keyboard-trap$0.0.1", "src/index");
-$_mod.def("/makeup-keyboard-trap$0.0.1/src/util", function(require, exports, module, __filename, __dirname) { 'use strict';
+$_mod.installed("makeup-modal$0.0.1", "makeup-keyboard-trap", "0.0.2");
+$_mod.main("/makeup-keyboard-trap$0.0.2", "");
+$_mod.def("/makeup-keyboard-trap$0.0.2/util", function(require, exports, module, __filename, __dirname) { 'use strict';
 
-const focusableElementsList = [
-    'a[href]',
-    'button:not([disabled])',
-    'area[href]',
-    'input:not([disabled])',
-    'select:not([disabled])',
-    'textarea:not([disabled])',
-    'iframe',
-    'object',
-    'embed',
-    '*[tabindex]',
-    '*[contenteditable]'
-];
+var focusableElementsList = ['a[href]', 'button:not([disabled])', 'area[href]', 'input:not([disabled])', 'select:not([disabled])', 'textarea:not([disabled])', 'iframe', 'object', 'embed', '*[tabindex]', '*[contenteditable]'];
 
 function createTrapBoundary() {
-    const div = document.createElement('div');
+    var div = document.createElement('div');
     div.setAttribute('tabindex', '0');
     div.className = 'keyboard-trap-boundary';
 
@@ -618,29 +606,29 @@ function createTrapBoundary() {
 }
 
 module.exports = {
-    createTrapBoundary,
-    focusableElementsList
+    createTrapBoundary: createTrapBoundary,
+    focusableElementsList: focusableElementsList
 };
 
 });
-$_mod.def("/makeup-keyboard-trap$0.0.1/src/index", function(require, exports, module, __filename, __dirname) { 'use strict';
+$_mod.def("/makeup-keyboard-trap$0.0.2/index", function(require, exports, module, __filename, __dirname) { 'use strict';
 
-const util = require('/makeup-keyboard-trap$0.0.1/src/util'/*'./util.js'*/);
+var util = require('/makeup-keyboard-trap$0.0.2/util'/*'./util.js'*/);
 
-const body = document.querySelector('body');
+var body = document.querySelector('body');
 
 // the element that will be trapped
-let trappedEl;
+var trappedEl = void 0;
 
-let topTrap = util.createTrapBoundary();
-let outerTrapBefore = util.createTrapBoundary();
-let innerTrapBefore = util.createTrapBoundary();
-let innerTrapAfter = util.createTrapBoundary();
-let outerTrapAfter = util.createTrapBoundary();
-let botTrap = util.createTrapBoundary();
+var topTrap = util.createTrapBoundary();
+var outerTrapBefore = util.createTrapBoundary();
+var innerTrapBefore = util.createTrapBoundary();
+var innerTrapAfter = util.createTrapBoundary();
+var outerTrapAfter = util.createTrapBoundary();
+var botTrap = util.createTrapBoundary();
 
-let firstFocusableElement;
-let lastFocusableElement;
+var firstFocusableElement = void 0;
+var lastFocusableElement = void 0;
 
 function setFocusToFirstFocusableElement() {
     firstFocusableElement.focus();
@@ -669,7 +657,7 @@ function untrap() {
         trappedEl.classList.remove('keyboard-trap--active');
 
         // let observers know the keyboard is now trapped
-        const event = document.createEvent('Event');
+        var event = document.createEvent('Event');
         event.initEvent('keyboardUntrap', false, true);
         trappedEl.dispatchEvent(event);
 
@@ -683,7 +671,7 @@ function trap(el) {
 
     trappedEl = el;
 
-    const focusableElements = trappedEl.querySelectorAll(util.focusableElementsList);
+    var focusableElements = trappedEl.querySelectorAll(util.focusableElementsList);
     firstFocusableElement = focusableElements[0];
     lastFocusableElement = focusableElements[focusableElements.length - 1];
 
@@ -695,7 +683,7 @@ function trap(el) {
     body.appendChild(botTrap);
 
     // let observers know the keyboard is now trapped
-    const event = document.createEvent('Event');
+    var event = document.createEvent('Event');
     event.initEvent('keyboardTrap', false, true);
     trappedEl.dispatchEvent(event);
 
@@ -705,186 +693,208 @@ function trap(el) {
 }
 
 module.exports = {
-    trap,
-    untrap
+    trap: trap,
+    untrap: untrap
 };
 
 });
-$_mod.installed("makeup-modal$0.0.1", "makeup-screenreader-trap", "0.0.2");
-$_mod.main("/makeup-screenreader-trap$0.0.2", "src/index");
-$_mod.def("/makeup-screenreader-trap$0.0.2/src/util", function(require, exports, module, __filename, __dirname) { 'use strict';
+$_mod.installed("makeup-modal$0.0.1", "makeup-screenreader-trap", "0.0.3");
+$_mod.main("/makeup-screenreader-trap$0.0.3", "");
+$_mod.def("/makeup-screenreader-trap$0.0.3/util", function(require, exports, module, __filename, __dirname) { 'use strict';
 
 // filter function for ancestor elements
-const filterAncestor = item => item.nodeType === 1 && item.tagName.toLowerCase() !== 'body' && item.tagName.toLowerCase() !== 'html';
+
+var filterAncestor = function filterAncestor(item) {
+    return item.nodeType === 1 && item.tagName.toLowerCase() !== 'body' && item.tagName.toLowerCase() !== 'html';
+};
 
 // filter function for sibling elements
-const filterSibling = item => item.nodeType === 1 && item.tagName.toLowerCase() !== 'script';
+var filterSibling = function filterSibling(item) {
+    return item.nodeType === 1 && item.tagName.toLowerCase() !== 'script';
+};
 
 // reducer to flatten arrays
-const flattenArrays = (a, b) => a.concat(b);
-
-// returns all sibling element nodes of given element
-function getSiblings(el) {
-  const allSiblings = getPreviousSiblings(el).concat(getNextSiblings(el));
-
-  return allSiblings.filter(filterSibling);
-}
+var flattenArrays = function flattenArrays(a, b) {
+    return a.concat(b);
+};
 
 // recursive function to get previous sibling nodes of given element
-function getPreviousSiblings(el, siblings = []) {
-  const previousSibling = el.previousSibling;
+function getPreviousSiblings(el) {
+    var siblings = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : [];
 
-  if (!previousSibling) {
-    return siblings;
-  }
+    var previousSibling = el.previousSibling;
 
-  siblings.push(previousSibling);
+    if (!previousSibling) {
+        return siblings;
+    }
 
-  return getPreviousSiblings(previousSibling, siblings);
+    siblings.push(previousSibling);
+
+    return getPreviousSiblings(previousSibling, siblings);
 }
 
 // recursive function to get next sibling nodes of given element
-function getNextSiblings(el, siblings = []) {
-  const nextSibling = el.nextSibling;
+function getNextSiblings(el) {
+    var siblings = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : [];
 
-  if (!nextSibling) {
-    return siblings;
-  }
+    var nextSibling = el.nextSibling;
 
-  siblings.push(nextSibling);
+    if (!nextSibling) {
+        return siblings;
+    }
 
-  return getNextSiblings(nextSibling, siblings);
+    siblings.push(nextSibling);
+
+    return getNextSiblings(nextSibling, siblings);
+}
+
+// returns all sibling element nodes of given element
+function getSiblings(el) {
+    var allSiblings = getPreviousSiblings(el).concat(getNextSiblings(el));
+
+    return allSiblings.filter(filterSibling);
+}
+
+// recursive function to get all ancestor nodes of given element
+function getAllAncestors(el) {
+    var ancestors = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : [];
+
+    var nextAncestor = el.parentNode;
+
+    if (!nextAncestor) {
+        return ancestors;
+    }
+
+    ancestors.push(nextAncestor);
+
+    return getAllAncestors(nextAncestor, ancestors);
 }
 
 // get ancestor nodes of given element
 function getAncestors(el) {
-  return getAllAncestors(el).filter(filterAncestor);
-}
-
-// recursive function to get all ancestor nodes of given element
-function getAllAncestors(el, ancestors = []) {
-  const nextAncestor = el.parentNode;
-
-  if (!nextAncestor) {
-    return ancestors;
-  }
-
-  ancestors.push(nextAncestor);
-
-  return getAllAncestors(nextAncestor, ancestors);
+    return getAllAncestors(el).filter(filterAncestor);
 }
 
 // get siblings of ancestors (i.e. aunts and uncles) of given el
 function getSiblingsOfAncestors(el) {
-  return getAncestors(el).map(item => getSiblings(item)).reduce(flattenArrays, []);
+    return getAncestors(el).map(function (item) {
+        return getSiblings(item);
+    }).reduce(flattenArrays, []);
 }
 
 module.exports = {
-  getSiblings,
-  getAncestors,
-  getSiblingsOfAncestors
+    getSiblings: getSiblings,
+    getAncestors: getAncestors,
+    getSiblingsOfAncestors: getSiblingsOfAncestors
 };
 
 });
-$_mod.def("/makeup-screenreader-trap$0.0.2/src/index", function(require, exports, module, __filename, __dirname) { 'use strict';
+$_mod.def("/makeup-screenreader-trap$0.0.3/index", function(require, exports, module, __filename, __dirname) { 'use strict';
 
-const util = require('/makeup-screenreader-trap$0.0.2/src/util'/*'./util.js'*/);
+var util = require('/makeup-screenreader-trap$0.0.3/util'/*'./util.js'*/);
 
 // the main landmark
-let mainEl;
+var mainEl = void 0;
 
 // the element that will be trapped
-let trappedEl;
+var trappedEl = void 0;
 
 // collection of elements that get 'dirtied' with aria-hidden attr
-let dirtyObjects;
+var dirtyObjects = void 0;
 
 function prepareAttribute(el, dirtyValue) {
-  return {
-    el,
-    cleanValue: el.getAttribute('aria-hidden'),
-    dirtyValue
-  };
+    return {
+        el: el,
+        cleanValue: el.getAttribute('aria-hidden'),
+        dirtyValue: dirtyValue
+    };
 }
 
 function dirtyAttribute(preparedObj) {
-  preparedObj.el.setAttribute('aria-hidden', preparedObj.dirtyValue);
+    preparedObj.el.setAttribute('aria-hidden', preparedObj.dirtyValue);
 }
 
 function cleanAttribute(preparedObj) {
-  if (preparedObj.cleanValue) {
-    preparedObj.el.setAttribute('aria-hidden', preparedObj.cleanValue);
-  } else {
-    preparedObj.el.removeAttribute('aria-hidden');
-  }
-}
-
-function trap(el) {
-  // ensure current trap is deactivated
-  untrap();
-
-  // update the trapped el reference
-  trappedEl = el;
-
-  // update the main landmark reference
-  mainEl = document.querySelector('main, [role="main"]');
-
-  // we must remove the main landmark to avoid issues on voiceover iOS
-  if (mainEl) {
-    mainEl.setAttribute('role', 'presentation');
-  }
-
-  // cache all ancestors, siblings & siblings of ancestors for trappedEl
-  const ancestors = util.getAncestors(trappedEl);
-  const siblings = util.getSiblings(trappedEl);
-  const siblingsOfAncestors = util.getSiblingsOfAncestors(trappedEl);
-
-  // prepare elements
-  dirtyObjects = [prepareAttribute(trappedEl, 'false')]
-                .concat(ancestors.map(item => prepareAttribute(item, 'false')))
-                .concat(siblings.map(item => prepareAttribute(item, 'true')))
-                .concat(siblingsOfAncestors.map(item => prepareAttribute(item, 'true')));
-
-  // update DOM
-  dirtyObjects.forEach(item => dirtyAttribute(item));
-
-  // let observers know the screenreader is now trapped
-  const event = document.createEvent('Event');
-  event.initEvent('screenreaderTrap', false, true);
-  trappedEl.dispatchEvent(event);
+    if (preparedObj.cleanValue) {
+        preparedObj.el.setAttribute('aria-hidden', preparedObj.cleanValue);
+    } else {
+        preparedObj.el.removeAttribute('aria-hidden');
+    }
 }
 
 function untrap() {
-  if (trappedEl) {
-    // restore 'dirtied' elements to their original state
-    dirtyObjects.forEach(item => cleanAttribute(item));
+    if (trappedEl) {
+        // restore 'dirtied' elements to their original state
+        dirtyObjects.forEach(function (item) {
+            return cleanAttribute(item);
+        });
 
-    dirtyObjects = [];
+        dirtyObjects = [];
 
-    // 're-enable' the main landmark
+        // 're-enable' the main landmark
+        if (mainEl) {
+            mainEl.setAttribute('role', 'main');
+        }
+
+        // let observers know the screenreader is now untrapped
+        var event = document.createEvent('Event');
+        event.initEvent('screenreaderUntrap', false, true);
+        trappedEl.dispatchEvent(event);
+
+        trappedEl = null;
+    }
+}
+
+function trap(el) {
+    // ensure current trap is deactivated
+    untrap();
+
+    // update the trapped el reference
+    trappedEl = el;
+
+    // update the main landmark reference
+    mainEl = document.querySelector('main, [role="main"]');
+
+    // we must remove the main landmark to avoid issues on voiceover iOS
     if (mainEl) {
-      mainEl.setAttribute('role', 'main');
+        mainEl.setAttribute('role', 'presentation');
     }
 
-    // let observers know the screenreader is now untrapped
-    const event = document.createEvent('Event');
-    event.initEvent('screenreaderUntrap', false, true);
-    trappedEl.dispatchEvent(event);
+    // cache all ancestors, siblings & siblings of ancestors for trappedEl
+    var ancestors = util.getAncestors(trappedEl);
+    var siblings = util.getSiblings(trappedEl);
+    var siblingsOfAncestors = util.getSiblingsOfAncestors(trappedEl);
 
-    trappedEl = null;
-  }
+    // prepare elements
+    dirtyObjects = [prepareAttribute(trappedEl, 'false')].concat(ancestors.map(function (item) {
+        return prepareAttribute(item, 'false');
+    })).concat(siblings.map(function (item) {
+        return prepareAttribute(item, 'true');
+    })).concat(siblingsOfAncestors.map(function (item) {
+        return prepareAttribute(item, 'true');
+    }));
+
+    // update DOM
+    dirtyObjects.forEach(function (item) {
+        return dirtyAttribute(item);
+    });
+
+    // let observers know the screenreader is now trapped
+    var event = document.createEvent('Event');
+    event.initEvent('screenreaderTrap', false, true);
+    trappedEl.dispatchEvent(event);
 }
 
 module.exports = {
-  trap,
-  untrap
+    trap: trap,
+    untrap: untrap
 };
 
 });
 $_mod.def("/makeup-modal$0.0.1/index", function(require, exports, module, __filename, __dirname) { 'use strict';
 
-var keyboardTrap = require('/makeup-keyboard-trap$0.0.1/src/index'/*'makeup-keyboard-trap'*/);
-var screenreaderTrap = require('/makeup-screenreader-trap$0.0.2/src/index'/*'makeup-screenreader-trap'*/);
+var keyboardTrap = require('/makeup-keyboard-trap$0.0.2/index'/*'makeup-keyboard-trap'*/);
+var screenreaderTrap = require('/makeup-screenreader-trap$0.0.3/index'/*'makeup-screenreader-trap'*/);
 
 var modalEl = void 0;
 
