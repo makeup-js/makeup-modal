@@ -1,4 +1,4 @@
-$_mod.installed("makeup-modal$0.0.2", "makeup-keyboard-trap", "0.0.7");
+$_mod.installed("makeup-modal$0.0.3", "makeup-keyboard-trap", "0.0.7");
 $_mod.main("/makeup-keyboard-trap$0.0.7", "");
 $_mod.installed("makeup-keyboard-trap$0.0.7", "custom-event-polyfill", "0.3.0");
 $_mod.main("/custom-event-polyfill$0.3.0", "custom-event-polyfill");
@@ -180,7 +180,7 @@ module.exports = {
 };
 
 });
-$_mod.installed("makeup-modal$0.0.2", "makeup-screenreader-trap", "0.0.4");
+$_mod.installed("makeup-modal$0.0.3", "makeup-screenreader-trap", "0.0.4");
 $_mod.main("/makeup-screenreader-trap$0.0.4", "");
 $_mod.installed("makeup-screenreader-trap$0.0.4", "custom-event-polyfill", "0.3.0");
 $_mod.def("/makeup-screenreader-trap$0.0.4/util", function(require, exports, module, __filename, __dirname) { 'use strict';
@@ -370,7 +370,7 @@ module.exports = {
 };
 
 });
-$_mod.def("/makeup-modal$0.0.2/index", function(require, exports, module, __filename, __dirname) { 'use strict';
+$_mod.def("/makeup-modal$0.0.3/index", function(require, exports, module, __filename, __dirname) { 'use strict';
 
 var keyboardTrap = require('/makeup-keyboard-trap$0.0.7/index'/*'makeup-keyboard-trap'*/);
 var screenreaderTrap = require('/makeup-screenreader-trap$0.0.4/index'/*'makeup-screenreader-trap'*/);
