@@ -1,41 +1,107 @@
-$_mod.installed("makeup-modal$0.0.2", "makeup-keyboard-trap", "0.0.2");
-$_mod.main("/makeup-keyboard-trap$0.0.2", "");
-$_mod.def("/makeup-keyboard-trap$0.0.2/util", function(require, exports, module, __filename, __dirname) { 'use strict';
+$_mod.installed("makeup-modal$0.0.2", "makeup-keyboard-trap", "0.0.7");
+$_mod.main("/makeup-keyboard-trap$0.0.7", "");
+$_mod.installed("makeup-keyboard-trap$0.0.7", "custom-event-polyfill", "0.3.0");
+$_mod.main("/custom-event-polyfill$0.3.0", "custom-event-polyfill");
+$_mod.def("/custom-event-polyfill$0.3.0/custom-event-polyfill", function(require, exports, module, __filename, __dirname) { // Polyfill for creating CustomEvents on IE9/10/11
 
-var focusableElementsList = ['a[href]', 'button:not([disabled])', 'area[href]', 'input:not([disabled])', 'select:not([disabled])', 'textarea:not([disabled])', 'iframe', 'object', 'embed', '*[tabindex]', '*[contenteditable]'];
+// code pulled from:
+// https://github.com/d4tocchini/customevent-polyfill
+// https://developer.mozilla.org/en-US/docs/Web/API/CustomEvent#Polyfill
 
-function createTrapBoundary() {
-    var div = document.createElement('div');
-    div.setAttribute('tabindex', '0');
-    div.className = 'keyboard-trap-boundary';
+try {
+    var ce = new window.CustomEvent('test');
+    ce.preventDefault();
+    if (ce.defaultPrevented !== true) {
+        // IE has problems with .preventDefault() on custom events
+        // http://stackoverflow.com/questions/23349191
+        throw new Error('Could not prevent default');
+    }
+} catch(e) {
+  var CustomEvent = function(event, params) {
+    var evt, origPrevent;
+    params = params || {
+      bubbles: false,
+      cancelable: false,
+      detail: undefined
+    };
 
-    return div;
+    evt = document.createEvent("CustomEvent");
+    evt.initCustomEvent(event, params.bubbles, params.cancelable, params.detail);
+    origPrevent = evt.preventDefault;
+    evt.preventDefault = function () {
+      origPrevent.call(this);
+      try {
+        Object.defineProperty(this, 'defaultPrevented', {
+          get: function () {
+            return true;
+          }
+        });
+      } catch(e) {
+        this.defaultPrevented = true;
+      }
+    };
+    return evt;
+  };
+
+  CustomEvent.prototype = window.Event.prototype;
+  window.CustomEvent = CustomEvent; // expose definition to window
 }
 
-module.exports = {
-    createTrapBoundary: createTrapBoundary,
-    focusableElementsList: focusableElementsList
+});
+$_mod.installed("makeup-keyboard-trap$0.0.7", "makeup-focusables", "0.0.1");
+$_mod.main("/makeup-focusables$0.0.1", "");
+$_mod.def("/makeup-focusables$0.0.1/index", function(require, exports, module, __filename, __dirname) { 'use strict';
+
+var focusableElList = ['a[href]', 'area[href]', 'button:not([disabled])', 'embed', 'iframe', 'input:not([disabled])', 'object', 'select:not([disabled])', 'textarea:not([disabled])', '*[tabindex]', '*[contenteditable]'];
+
+var focusableElSelector = focusableElList.join();
+
+module.exports = function (el) {
+    var keyboardOnly = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : false;
+
+    var focusableEls = Array.prototype.slice.call(el.querySelectorAll(focusableElSelector));
+
+    if (keyboardOnly === true) {
+        focusableEls = focusableEls.filter(function (focusableEl) {
+            return focusableEl.getAttribute('tabindex') !== '-1';
+        });
+    }
+
+    return focusableEls;
 };
 
 });
-$_mod.def("/makeup-keyboard-trap$0.0.2/index", function(require, exports, module, __filename, __dirname) { 'use strict';
+$_mod.def("/makeup-keyboard-trap$0.0.7/index", function(require, exports, module, __filename, __dirname) { 'use strict';
 
-var util = require('/makeup-keyboard-trap$0.0.2/util'/*'./util.js'*/);
+var focusables = require('/makeup-focusables$0.0.1/index'/*'makeup-focusables'*/);
 
-var body = document.querySelector('body');
+// when bundled up with isomorphic components on the server, this code is run,
+// so we must check if 'document' is defined.
+var body = typeof document === "undefined" ? null : document.body;
 
-// the element that will be trapped
+// for the element that will be trapped
 var trappedEl = void 0;
 
-var topTrap = util.createTrapBoundary();
-var outerTrapBefore = util.createTrapBoundary();
-var innerTrapBefore = util.createTrapBoundary();
-var innerTrapAfter = util.createTrapBoundary();
-var outerTrapAfter = util.createTrapBoundary();
-var botTrap = util.createTrapBoundary();
+// for the trap boundary/bumper elements
+var topTrap = void 0;
+var outerTrapBefore = void 0;
+var innerTrapBefore = void 0;
+var innerTrapAfter = void 0;
+var outerTrapAfter = void 0;
+var botTrap = void 0;
 
+// for the first and last focusable element inside the trap
 var firstFocusableElement = void 0;
 var lastFocusableElement = void 0;
+
+function createTrapBoundary() {
+    var trapBoundary = document.createElement('div');
+
+    trapBoundary.setAttribute('tabindex', '0');
+    trapBoundary.className = 'keyboard-trap-boundary';
+
+    return trapBoundary;
+}
 
 function setFocusToFirstFocusableElement() {
     firstFocusableElement.focus();
@@ -45,12 +111,21 @@ function setFocusToLastFocusableElement() {
     lastFocusableElement.focus();
 }
 
-topTrap.addEventListener('focus', setFocusToFirstFocusableElement);
-outerTrapBefore.addEventListener('focus', setFocusToFirstFocusableElement);
-innerTrapBefore.addEventListener('focus', setFocusToLastFocusableElement);
-innerTrapAfter.addEventListener('focus', setFocusToFirstFocusableElement);
-outerTrapAfter.addEventListener('focus', setFocusToLastFocusableElement);
-botTrap.addEventListener('focus', setFocusToLastFocusableElement);
+function createTraps() {
+    topTrap = createTrapBoundary();
+    outerTrapBefore = topTrap.cloneNode();
+    innerTrapBefore = topTrap.cloneNode();
+    innerTrapAfter = topTrap.cloneNode();
+    outerTrapAfter = topTrap.cloneNode();
+    botTrap = topTrap.cloneNode();
+
+    topTrap.addEventListener('focus', setFocusToFirstFocusableElement);
+    outerTrapBefore.addEventListener('focus', setFocusToFirstFocusableElement);
+    innerTrapBefore.addEventListener('focus', setFocusToLastFocusableElement);
+    innerTrapAfter.addEventListener('focus', setFocusToFirstFocusableElement);
+    outerTrapAfter.addEventListener('focus', setFocusToLastFocusableElement);
+    botTrap.addEventListener('focus', setFocusToLastFocusableElement);
+}
 
 function untrap() {
     if (trappedEl) {
@@ -63,10 +138,8 @@ function untrap() {
 
         trappedEl.classList.remove('keyboard-trap--active');
 
-        // let observers know the keyboard is now trapped
-        var event = document.createEvent('Event');
-        event.initEvent('keyboardUntrap', false, true);
-        trappedEl.dispatchEvent(event);
+        // let observers know the keyboard is no longer trapped
+        trappedEl.dispatchEvent(new CustomEvent('keyboardUntrap', { bubbles: true }));
 
         trappedEl = null;
     }
@@ -74,11 +147,15 @@ function untrap() {
 }
 
 function trap(el) {
-    untrap();
+    if (!topTrap) {
+        createTraps();
+    } else {
+        untrap();
+    }
 
     trappedEl = el;
 
-    var focusableElements = trappedEl.querySelectorAll(util.focusableElementsList);
+    var focusableElements = focusables(trappedEl);
     firstFocusableElement = focusableElements[0];
     lastFocusableElement = focusableElements[focusableElements.length - 1];
 
@@ -90,9 +167,7 @@ function trap(el) {
     body.appendChild(botTrap);
 
     // let observers know the keyboard is now trapped
-    var event = document.createEvent('Event');
-    event.initEvent('keyboardTrap', false, true);
-    trappedEl.dispatchEvent(event);
+    trappedEl.dispatchEvent(new CustomEvent('keyboardTrap', { bubbles: true }));
 
     trappedEl.classList.add('keyboard-trap--active');
 
@@ -105,9 +180,10 @@ module.exports = {
 };
 
 });
-$_mod.installed("makeup-modal$0.0.2", "makeup-screenreader-trap", "0.0.3");
-$_mod.main("/makeup-screenreader-trap$0.0.3", "");
-$_mod.def("/makeup-screenreader-trap$0.0.3/util", function(require, exports, module, __filename, __dirname) { 'use strict';
+$_mod.installed("makeup-modal$0.0.2", "makeup-screenreader-trap", "0.0.4");
+$_mod.main("/makeup-screenreader-trap$0.0.4", "");
+$_mod.installed("makeup-screenreader-trap$0.0.4", "custom-event-polyfill", "0.3.0");
+$_mod.def("/makeup-screenreader-trap$0.0.4/util", function(require, exports, module, __filename, __dirname) { 'use strict';
 
 // filter function for ancestor elements
 
@@ -196,9 +272,9 @@ module.exports = {
 };
 
 });
-$_mod.def("/makeup-screenreader-trap$0.0.3/index", function(require, exports, module, __filename, __dirname) { 'use strict';
+$_mod.def("/makeup-screenreader-trap$0.0.4/index", function(require, exports, module, __filename, __dirname) { 'use strict';
 
-var util = require('/makeup-screenreader-trap$0.0.3/util'/*'./util.js'*/);
+var util = require('/makeup-screenreader-trap$0.0.4/util'/*'./util.js'*/);
 
 // the main landmark
 var mainEl = void 0;
@@ -244,9 +320,7 @@ function untrap() {
         }
 
         // let observers know the screenreader is now untrapped
-        var event = document.createEvent('Event');
-        event.initEvent('screenreaderUntrap', false, true);
-        trappedEl.dispatchEvent(event);
+        trappedEl.dispatchEvent(new CustomEvent('screenreaderUntrap', { bubbles: true }));
 
         trappedEl = null;
     }
@@ -287,9 +361,7 @@ function trap(el) {
     });
 
     // let observers know the screenreader is now trapped
-    var event = document.createEvent('Event');
-    event.initEvent('screenreaderTrap', false, true);
-    trappedEl.dispatchEvent(event);
+    trappedEl.dispatchEvent(new CustomEvent('screenreaderTrap', { bubbles: true }));
 }
 
 module.exports = {
@@ -300,8 +372,8 @@ module.exports = {
 });
 $_mod.def("/makeup-modal$0.0.2/index", function(require, exports, module, __filename, __dirname) { 'use strict';
 
-var keyboardTrap = require('/makeup-keyboard-trap$0.0.2/index'/*'makeup-keyboard-trap'*/);
-var screenreaderTrap = require('/makeup-screenreader-trap$0.0.3/index'/*'makeup-screenreader-trap'*/);
+var keyboardTrap = require('/makeup-keyboard-trap$0.0.7/index'/*'makeup-keyboard-trap'*/);
+var screenreaderTrap = require('/makeup-screenreader-trap$0.0.4/index'/*'makeup-screenreader-trap'*/);
 
 var modalEl = void 0;
 
