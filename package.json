@@ -52,5 +52,10 @@
   "dependencies": {
     "makeup-keyboard-trap": "~0.0",
     "makeup-screenreader-trap": "~0.0"
-  }
+  },
+  "files": [
+    "browser.json",
+    "index.js",
+    "yarn.lock"
+  ]
 }
