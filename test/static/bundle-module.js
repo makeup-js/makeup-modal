@@ -1,6 +1,6 @@
-$_mod.installed("makeup-modal$0.0.4", "makeup-keyboard-trap", "0.0.7");
-$_mod.main("/makeup-keyboard-trap$0.0.7", "");
-$_mod.installed("makeup-keyboard-trap$0.0.7", "custom-event-polyfill", "0.3.0");
+$_mod.installed("makeup-modal$0.0.4", "makeup-keyboard-trap", "0.0.9");
+$_mod.main("/makeup-keyboard-trap$0.0.9", "");
+$_mod.installed("makeup-keyboard-trap$0.0.9", "custom-event-polyfill", "0.3.0");
 $_mod.main("/custom-event-polyfill$0.3.0", "custom-event-polyfill");
 $_mod.def("/custom-event-polyfill$0.3.0/custom-event-polyfill", function(require, exports, module, __filename, __dirname) { // Polyfill for creating CustomEvents on IE9/10/11
 
@@ -48,36 +48,38 @@ try {
 }
 
 });
-$_mod.installed("makeup-keyboard-trap$0.0.7", "makeup-focusables", "0.0.1");
-$_mod.main("/makeup-focusables$0.0.1", "");
-$_mod.def("/makeup-focusables$0.0.1/index", function(require, exports, module, __filename, __dirname) { 'use strict';
+$_mod.installed("makeup-keyboard-trap$0.0.9", "makeup-focusables", "0.0.4");
+$_mod.main("/makeup-focusables$0.0.4", "");
+$_mod.def("/makeup-focusables$0.0.4/index", function(require, exports, module, __filename, __dirname) { 'use strict';
 
 var focusableElList = ['a[href]', 'area[href]', 'button:not([disabled])', 'embed', 'iframe', 'input:not([disabled])', 'object', 'select:not([disabled])', 'textarea:not([disabled])', '*[tabindex]', '*[contenteditable]'];
-
 var focusableElSelector = focusableElList.join();
 
 module.exports = function (el) {
-    var keyboardOnly = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : false;
+  var keyboardOnly = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : false;
+  var focusableEls = Array.prototype.slice.call(el.querySelectorAll(focusableElSelector)); // filter out elements with display: none
 
-    var focusableEls = Array.prototype.slice.call(el.querySelectorAll(focusableElSelector));
+  focusableEls = focusableEls.filter(function (focusableEl) {
+    return window.getComputedStyle(focusableEl).display !== 'none';
+  });
 
-    if (keyboardOnly === true) {
-        focusableEls = focusableEls.filter(function (focusableEl) {
-            return focusableEl.getAttribute('tabindex') !== '-1';
-        });
-    }
+  if (keyboardOnly === true) {
+    focusableEls = focusableEls.filter(function (focusableEl) {
+      return focusableEl.getAttribute('tabindex') !== '-1';
+    });
+  }
 
-    return focusableEls;
+  return focusableEls;
 };
 
 });
-$_mod.def("/makeup-keyboard-trap$0.0.7/index", function(require, exports, module, __filename, __dirname) { 'use strict';
+$_mod.def("/makeup-keyboard-trap$0.0.9/index", function(require, exports, module, __filename, __dirname) { 'use strict';
 
-var focusables = require('/makeup-focusables$0.0.1/index'/*'makeup-focusables'*/);
+var focusables = require('/makeup-focusables$0.0.4/index'/*'makeup-focusables'*/);
 
 // when bundled up with isomorphic components on the server, this code is run,
 // so we must check if 'document' is defined.
-var body = typeof document === "undefined" ? null : document.body;
+var body = typeof document === 'undefined' ? null : document.body;
 
 // for the element that will be trapped
 var trappedEl = void 0;
@@ -174,16 +176,28 @@ function trap(el) {
     return trappedEl;
 }
 
+function refresh() {
+    if (topTrap && trappedEl) {
+        var focusableElements = focusables(trappedEl);
+        focusableElements = focusableElements.filter(function (el) {
+            return !el.classList.contains('keyboard-trap-boundary');
+        });
+        firstFocusableElement = focusableElements[0];
+        lastFocusableElement = focusableElements[focusableElements.length - 1];
+    }
+}
+
 module.exports = {
+    refresh: refresh,
     trap: trap,
     untrap: untrap
 };
 
 });
-$_mod.installed("makeup-modal$0.0.4", "makeup-screenreader-trap", "0.0.4");
-$_mod.main("/makeup-screenreader-trap$0.0.4", "");
-$_mod.installed("makeup-screenreader-trap$0.0.4", "custom-event-polyfill", "0.3.0");
-$_mod.def("/makeup-screenreader-trap$0.0.4/util", function(require, exports, module, __filename, __dirname) { 'use strict';
+$_mod.installed("makeup-modal$0.0.4", "makeup-screenreader-trap", "0.0.5");
+$_mod.main("/makeup-screenreader-trap$0.0.5", "");
+$_mod.installed("makeup-screenreader-trap$0.0.5", "custom-event-polyfill", "0.3.0");
+$_mod.def("/makeup-screenreader-trap$0.0.5/util", function(require, exports, module, __filename, __dirname) { 'use strict';
 
 // filter function for ancestor elements
 
@@ -272,9 +286,9 @@ module.exports = {
 };
 
 });
-$_mod.def("/makeup-screenreader-trap$0.0.4/index", function(require, exports, module, __filename, __dirname) { 'use strict';
+$_mod.def("/makeup-screenreader-trap$0.0.5/index", function(require, exports, module, __filename, __dirname) { 'use strict';
 
-var util = require('/makeup-screenreader-trap$0.0.4/util'/*'./util.js'*/);
+var util = require('/makeup-screenreader-trap$0.0.5/util'/*'./util.js'*/);
 
 // the main landmark
 var mainEl = void 0;
@@ -372,8 +386,8 @@ module.exports = {
 });
 $_mod.def("/makeup-modal$0.0.4/index", function(require, exports, module, __filename, __dirname) { 'use strict';
 
-var keyboardTrap = require('/makeup-keyboard-trap$0.0.7/index'/*'makeup-keyboard-trap'*/);
-var screenreaderTrap = require('/makeup-screenreader-trap$0.0.4/index'/*'makeup-screenreader-trap'*/);
+var keyboardTrap = require('/makeup-keyboard-trap$0.0.9/index'/*'makeup-keyboard-trap'*/);
+var screenreaderTrap = require('/makeup-screenreader-trap$0.0.5/index'/*'makeup-screenreader-trap'*/);
 
 var modalEl = void 0;
 
