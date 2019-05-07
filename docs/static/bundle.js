@@ -591,7 +591,7 @@ https://github.com/joyent/node/blob/master/lib/module.js
     }
 })();
 
-$_mod.installed("makeup-modal$0.0.4", "makeup-keyboard-trap", "0.2.0");
+$_mod.installed("makeup-modal$0.1.0", "makeup-keyboard-trap", "0.2.0");
 $_mod.main("/makeup-keyboard-trap$0.2.0", "");
 $_mod.installed("makeup-keyboard-trap$0.2.0", "custom-event-polyfill", "1.0.7");
 $_mod.main("/custom-event-polyfill$1.0.7", "polyfill");
@@ -793,7 +793,7 @@ module.exports = {
 };
 
 });
-$_mod.installed("makeup-modal$0.0.4", "makeup-screenreader-trap", "0.1.0");
+$_mod.installed("makeup-modal$0.1.0", "makeup-screenreader-trap", "0.1.0");
 $_mod.main("/makeup-screenreader-trap$0.1.0", "");
 $_mod.installed("makeup-screenreader-trap$0.1.0", "custom-event-polyfill", "1.0.7");
 $_mod.def("/makeup-screenreader-trap$0.1.0/util", function(require, exports, module, __filename, __dirname) { 'use strict'; // filter function for ancestor elements
@@ -967,7 +967,7 @@ module.exports = {
 };
 
 });
-$_mod.def("/makeup-modal$0.0.4/index", function(require, exports, module, __filename, __dirname) { 'use strict';
+$_mod.def("/makeup-modal$0.1.0/index", function(require, exports, module, __filename, __dirname) { 'use strict';
 
 var keyboardTrap = require('/makeup-keyboard-trap$0.2.0/index'/*'makeup-keyboard-trap'*/);
 
@@ -1007,13 +1007,13 @@ module.exports = {
 };
 
 });
-$_mod.def("/makeup-modal$0.0.4/docs/index", function(require, exports, module, __filename, __dirname) { "use strict";
+$_mod.def("/makeup-modal$0.1.0/docs/index", function(require, exports, module, __filename, __dirname) { "use strict";
 
 /* eslint-disable no-console */
-var modal = require('/makeup-modal$0.0.4/index'/*'../index.js'*/);
+var modal = require('/makeup-modal$0.1.0/index'/*'../index.js'*/);
 
 var modalEl = document.querySelector('.modal');
 modal.modal(modalEl);
 
 });
-$_mod.run("/makeup-modal$0.0.4/docs/index");
+$_mod.run("/makeup-modal$0.1.0/docs/index");
