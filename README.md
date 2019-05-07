@@ -52,11 +52,6 @@ yarn add makeup-modal
 * `npm run build`
 * `npm run clean`
 
-The following hooks exist, and do not need to be invoked manually:
-
-* `npm prepublish` cleans, lints, tests and builds on every `npm publish` command
-* `pre-commit` cleans, lints, tests and builds on every `git commit` command
-
 ## Test Reports
 
 Each test run will generate the following reports:

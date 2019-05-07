@@ -1,40 +1,38 @@
 'use strict';
 
 var keyboardTrap = require('makeup-keyboard-trap');
+
 var screenreaderTrap = require('makeup-screenreader-trap');
 
-var modalEl = void 0;
+var modalEl;
 
 function unmodal() {
-    if (modalEl) {
-        screenreaderTrap.untrap(modalEl);
-        keyboardTrap.untrap(modalEl);
+  if (modalEl) {
+    screenreaderTrap.untrap(modalEl);
+    keyboardTrap.untrap(modalEl); // let observers know the keyboard is now trapped
 
-        // let observers know the keyboard is now trapped
-        var event = document.createEvent('Event');
-        event.initEvent('unmodal', false, true);
-        modalEl.dispatchEvent(event);
+    var event = document.createEvent('Event');
+    event.initEvent('unmodal', false, true);
+    modalEl.dispatchEvent(event);
+    modalEl = null;
+  }
 
-        modalEl = null;
-    }
-    return modalEl;
+  return modalEl;
 }
 
 function modal(el) {
-    unmodal();
-    modalEl = el;
-    screenreaderTrap.trap(modalEl);
-    keyboardTrap.trap(modalEl);
+  unmodal();
+  modalEl = el;
+  screenreaderTrap.trap(modalEl);
+  keyboardTrap.trap(modalEl); // let observers know the element is now modal
 
-    // let observers know the element is now modal
-    var event = document.createEvent('Event');
-    event.initEvent('modal', false, true);
-    modalEl.dispatchEvent(event);
-
-    return modalEl;
+  var event = document.createEvent('Event');
+  event.initEvent('modal', false, true);
+  modalEl.dispatchEvent(event);
+  return modalEl;
 }
 
 module.exports = {
-    modal: modal,
-    unmodal: unmodal
+  modal: modal,
+  unmodal: unmodal
 };

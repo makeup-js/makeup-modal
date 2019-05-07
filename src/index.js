@@ -26,7 +26,6 @@ function modal(el) {
     screenreaderTrap.trap(modalEl);
     keyboardTrap.trap(modalEl);
 
-
     // let observers know the element is now modal
     const event = document.createEvent('Event');
     event.initEvent('modal', false, true);
