@@ -1,4 +1,4 @@
-var modal = require('../index.js');
+var modal = require('../src/index.js');
 var testData = require('./data.js');
 var modalEl;
 var onModal;
