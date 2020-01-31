@@ -59,8 +59,8 @@
     "webpack-cli": "^3"
   },
   "dependencies": {
-    "makeup-keyboard-trap": "~0.2.1",
-    "makeup-screenreader-trap": "~0.1.2"
+    "makeup-keyboard-trap": "~0.2.2",
+    "makeup-screenreader-trap": "~0.1.3"
   },
   "files": [
     "browser.json",
